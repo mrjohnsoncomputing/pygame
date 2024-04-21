@@ -1,16 +1,18 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
-    name='pygame',
-    version='0.0.1',
-    py_modules=['applecatch'],
+    name='pygame_games',
+    version='0.0.8',
+    py_modules=find_packages(),
+    include_package_data=True,
     install_requires=[
         'click',
-        'pygame'
+        'pygame',
+        'numpy'
     ],
     entry_points={
         'console_scripts': [
-            'yourscript = yourscript:cli',
+            'apple_catch = apple_catch.apple_catch.cli:test',
         ],
     },
 )
