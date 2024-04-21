@@ -1,11 +1,14 @@
+from pygame.image import load as load_image
+
 from .logger import Logger
 from .entities.apple_manager import AppleManager
 from .game_engine import GameEngine
 from .entities.dimension import Dimension
 from .entities.apple import Apple, AppleConfig
-from .entities.catcher import Catcher
+from .entities.catcher import Catcher, CatcherConfig
 
 def main():
+    logger = Logger(x=10, y=10, font_size=10)
     apple_config = AppleConfig(
         min_width=16,
         max_width=64,
@@ -17,17 +20,36 @@ def main():
         img_path="./img/apple.png"
     )
 
+    catcher_config = CatcherConfig(
+        width=200,
+        speed=5,
+        img_path="./img/catcher.png"
+    )
+
     screen_size = Dimension(
         x=0,
         y=0,
         w=1500,
         h=900)
     
-    logger = Logger(x=10, y=10, font_size=10)
+    image = load_image(catcher_config.img_path)
+    catcher = Catcher(
+        image=image,
+        dimension=Dimension(
+            x = screen_size.w / 2,
+            y = screen_size.h - catcher_config.width - 20,
+            w = catcher_config.width,
+            h = catcher_config.width
+        ),
+        speed = 10,
+        logger=logger
+        )
+    
+
 
     apple_manager = AppleManager(config=apple_config, screen_size=screen_size, logger=logger)
 
-    engine = GameEngine(screen_size=screen_size, apple_manager=apple_manager, logger=logger)
+    engine = GameEngine(screen_size=screen_size, catcher=catcher, apple_manager=apple_manager, logger=logger)
 
     engine.init()
 

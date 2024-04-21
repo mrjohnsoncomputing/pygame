@@ -13,3 +13,6 @@ class Dimension:
 
     def new_y(self, y:float):
         return replace(self, y=y)
+
+    def new_x(self, x:float):
+        return replace(self, x=x)
