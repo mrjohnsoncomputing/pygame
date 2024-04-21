@@ -30,7 +30,10 @@ class AppleManager:
         dimension = Dimension(x=x, y=y, w=w, h=w)
         img = self._apple_image if is_good_apple else self._bad_apple_image
         apple = Apple(dimension=dimension, image=img, is_good=is_good_apple, speed=speed)
-        self._good_apples.add(apple)
+        if apple._is_good:
+            self._good_apples.add(apple)
+        else:
+            self._bad_apples.add(apple)
     
     def try_add_apple(self) -> Entity | None:
         spawn_chance = random()

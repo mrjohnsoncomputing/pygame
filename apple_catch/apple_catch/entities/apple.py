@@ -32,6 +32,10 @@ class Apple(Entity):
         self._fall_time: float = 0
         self.rotation: float = 0
     
+    @property
+    def width(self) -> float:
+        return self._dimension.w
+
     def get_rekt(self) -> Rect:
         return Rect(self._dimension.x, self._dimension.y, self._dimension.w, self._dimension.h)
     

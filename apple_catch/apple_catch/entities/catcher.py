@@ -43,7 +43,7 @@ class Catcher(Entity):
         if keys[K_RIGHT] or keys[K_d]:
             x = self._dimension.x + self.speed
         
-        if x < 0 or x > screen_width:
+        if x < 0 or x > screen_width - self._dimension.w:
             return
         
         self._dimension = self._dimension.new_x(x=x)
