@@ -5,7 +5,7 @@ from pygame import Surface
 from pygame.sprite import Group
 from pygame.image import load as load_image
 
-from ..logger import Logger
+from ..helpers import Logger
 from .dimension import Dimension
 from .apple import Apple, AppleConfig
 from .entity import Entity

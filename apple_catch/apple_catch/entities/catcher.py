@@ -1,13 +1,12 @@
 from dataclasses import dataclass
-from random import randint, random
-from typing import Any
+
 
 from pygame import Surface, Rect
 from pygame.transform import scale
 from pygame.key import get_pressed
 from pygame import K_LEFT, K_RIGHT, K_a, K_d
 
-from ..logger import Logger
+from ..helpers import Logger
 
 from .dimension import Dimension
 from .entity import Entity

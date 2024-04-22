@@ -8,16 +8,17 @@ from pygame.event import get as get_event
 from pygame.image import load as load_image
 from pygame.sprite import spritecollideany, Group
 
-from .entities.text import Text
-from .helpers.math import Math
-
-from .logger import Logger
-from .entities.catcher import Catcher
-from .entities.dimension import Dimension
-from .entities.apple_manager import AppleManager
+from .entities import Terrain, Text, Catcher, Dimension, AppleManager
+from .helpers import Math, Logger
 
 class GameEngine:
-    def __init__(self, screen_size: Dimension, catcher: Catcher, apple_manager: AppleManager, logger: Logger):
+    def __init__(
+            self, 
+            screen_size: Dimension, 
+            catcher: Catcher, 
+            apple_manager: AppleManager, 
+            terrain: Terrain,
+            logger: Logger):
         self._screen: Surface | None = None
         self._game_clock: Clock | None = None
         self._game_is_running: bool = False
@@ -28,6 +29,7 @@ class GameEngine:
         self._image: Surface = load_image("./img/background.png")
         self._score: int = 0
         self._text: Group = Group()
+        self._terrain: Terrain = terrain
     
     def init(self):
         pygame_init()
@@ -35,11 +37,11 @@ class GameEngine:
         self._game_clock = Clock()
         self._game_is_running = True
         
-    
     def run(self):
         dt = 0
         while self._game_is_running:
-            self._screen.blit(self._image, (self._screen_size.w - 3000, self._screen_size.h - 3000))
+            #self._screen.blit(self._image, (self._screen_size.w - 3000, self._screen_size.h - 3000))
+            self._terrain.draw(self._screen)
             self._logger.reset()
             self._logger.log(f"Score: {self._score}", self._screen)
             # poll for events

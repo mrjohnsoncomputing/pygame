@@ -1,12 +1,9 @@
 from pygame.image import load as load_image
-from pygame.font import get_fonts
 
-from .logger import Logger
-from .entities.apple_manager import AppleManager
+from .entities import Terrain, Dimension, AppleConfig, Catcher, CatcherConfig, AppleManager
+from .helpers import Logger
 from .game_engine import GameEngine
-from .entities.dimension import Dimension
-from .entities.apple import AppleConfig
-from .entities.catcher import Catcher, CatcherConfig
+
 
 def main():
     # print(get_fonts())
@@ -48,8 +45,18 @@ def main():
         )
     
     apple_manager = AppleManager(config=apple_config, screen_size=screen_size, logger=logger)
+    
+    terrain = Terrain(
+        screen_size=screen_size,
+        ground_size=128,
+        logger=logger)
 
-    engine = GameEngine(screen_size=screen_size, catcher=catcher, apple_manager=apple_manager, logger=logger)
+    engine = GameEngine(
+        screen_size=screen_size,
+        terrain=terrain,
+        catcher=catcher,
+        apple_manager=apple_manager,
+        logger=logger)
 
     engine.init()
     engine.run()
