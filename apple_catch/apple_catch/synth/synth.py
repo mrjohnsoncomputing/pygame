@@ -9,7 +9,7 @@ class Synth:
 
     def play_note(self, frequency: int, duration: float = 1.5, sampling_rate: int = 44100):
         note = self.create_note(frequency=frequency, duration=duration, sampling_rate=sampling_rate)
-        ## TODO: sound.set_volume(n)
+        note.set_volume(0.6)
         note.play()
 
     def create_note(self, frequency: int, duration: float = 1.5, sampling_rate: int = 44100) -> Sound:

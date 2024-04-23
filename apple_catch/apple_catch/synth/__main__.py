@@ -51,6 +51,7 @@ def main():
     
     pool = ThreadPoolExecutor(max_workers=3)
     for i in range(100):
+        print(i)
         try:
             pool.submit(high_organ.walk, 0.5, 0.1)
         except:
