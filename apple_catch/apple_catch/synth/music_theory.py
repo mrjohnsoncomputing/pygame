@@ -44,19 +44,15 @@ class MusicTheory:
     def note_sequence(self, root_note: str):
         notes = []
         sequence_started = False
-        print(f"Note list: {self.note_list}")
         for note in self.note_list:
             if note == root_note and sequence_started == False:
-                print(f"First note: {note}")
                 notes.append(note)
                 sequence_started = True
             
             elif sequence_started == True:
-                print(f"Appending note: {note}")
                 notes.append(note)
 
                 if note == root_note:
-                    print(f"Final note: {note}")
                     return notes
         return notes
 
@@ -65,19 +61,15 @@ class MusicTheory:
         for i in range(start_octave, start_octave + octave_count + 1):
             note_counter = 0
             for note in note_sequence:
-                if interval_mask[note_counter] == 0:
-                    print(f"Not in key: {note}")
-                else:
+                if interval_mask[note_counter] == 1:
                     note_id = f"{note}{i}"
                     notes.append(self._note_table[note_id])
-                    print(f"In key: {note}")
                 note_counter += 1
         return notes
 
     def get_major_key(self, root_note: str, start_octave: int = 4, octave_count: int = 2) -> list[Note]:
         major_interval_mask = [1,0,1,0,1,1,0,1,0,1,0,1,1]
         note_sequence = self.note_sequence(root_note=root_note)
-        print(f"Note Sequence: {note_sequence}")
         return self.get_key(interval_mask=major_interval_mask, note_sequence=note_sequence, start_octave=start_octave, octave_count=octave_count)
         
 
