@@ -45,8 +45,8 @@ class AppleManager:
    
 
     def update(self, time_delta: float):
-        self._bad_apples.update(time_delta, self._config.terminal_velocity)
-        self._good_apples.update(time_delta, self._config.terminal_velocity)
+        self._bad_apples.update(time_delta)
+        self._good_apples.update(time_delta)
 
         self._good_apples.remove(self._offscreen_apples(apple_group=self._good_apples))
         self._bad_apples.remove(self._offscreen_apples(apple_group=self._bad_apples))

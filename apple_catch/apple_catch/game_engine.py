@@ -8,7 +8,7 @@ from pygame.event import get as get_event
 from pygame.image import load as load_image
 from pygame.sprite import spritecollideany, Group
 
-from .entities import Terrain, Text, Catcher, Dimension, AppleManager
+from .entities import Terrain, Text, Catcher, Dimension, AppleManager, DisplayNumber, DisplayNumberFactory, DisplayNumberGroup
 from .helpers import Math, Logger
 
 class GameEngine:
@@ -18,7 +18,9 @@ class GameEngine:
             catcher: Catcher, 
             apple_manager: AppleManager, 
             terrain: Terrain,
+            display_number_factory: DisplayNumberFactory,
             logger: Logger):
+        self._display_text_factory = display_number_factory
         self._screen: Surface | None = None
         self._game_clock: Clock | None = None
         self._game_is_running: bool = False
@@ -27,15 +29,31 @@ class GameEngine:
         self._screen_size: Dimension = screen_size
         self._logger: Logger = logger
         self._image: Surface = load_image("./img/background.png")
-        self._score: int = 0
+        self._current_score: int = 0
         self._text: Group = Group()
+        self._display_text_group: DisplayNumberGroup = DisplayNumberGroup()
         self._terrain: Terrain = terrain
     
+    @property
+    def current_score(self):
+        return self._current_score
+    
+    @current_score.setter
+    def current_score(self, value: int):
+        self._current_score = value
+        if (item := self._display_text_group.get_item_from_label("Current Score")) is not None:
+            item.update_value(self._current_score)
+
     def init(self):
         pygame_init()
         self._screen = display.set_mode((self._screen_size.w, self._screen_size.h))
         self._game_clock = Clock()
         self._game_is_running = True
+        self.create_display_text()
+
+    def create_display_text(self):
+        current_score = self._display_text_factory.get_current_score()
+        self._display_text_group.add(current_score)
         
     def run(self):
         dt = 0
@@ -43,7 +61,7 @@ class GameEngine:
             #self._screen.blit(self._image, (self._screen_size.w - 3000, self._screen_size.h - 3000))
             self._terrain.draw(self._screen)
             self._logger.reset()
-            self._logger.log(f"Score: {self._score}", self._screen)
+            self._logger.log(f"Score: {self._current_score}", self._screen)
             # poll for events
             # pygame.QUIT event means the user clicked X to close your window
             for event in get_event():
@@ -60,7 +78,7 @@ class GameEngine:
             if (good_apple := spritecollideany(self._catcher, self._apple_manager._good_apples)) is not None:
                 self._apple_manager._good_apples.remove(good_apple)
                 points = Math.roundto(good_apple.width/10, 5)
-                self._score += points
+                self.current_score += points
                 self._text.add(
                     Text(
                         text = f"+{points}",
@@ -74,7 +92,7 @@ class GameEngine:
             if (bad_apple := spritecollideany(self._catcher, self._apple_manager._bad_apples)) is not None:
                 self._apple_manager._bad_apples.remove(bad_apple)
                 points = Math.roundto(bad_apple.width/10, 5)
-                self._score -= points
+                self.current_score -= points
                 self._text.add(
                     Text(
                         text = f"-{points}",
@@ -87,6 +105,9 @@ class GameEngine:
 
             self._text.update()
             self._text.draw(self._screen)
+
+            self._display_text_group.update()
+            self._display_text_group.draw(self._screen)
 
             self._text.remove(
                 [

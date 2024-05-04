@@ -42,7 +42,7 @@ class Apple(Entity):
     def _scale_image(self, image: Surface) -> Surface:
         return scale(image, (self._dimension.w, self._dimension.h))
 
-    def update(self, time_delta: float, terminal_velocity: float) -> None:
+    def update(self, time_delta: float) -> None:
         self._fall_time += time_delta
         self._dimension = self._dimension.new_y(y= self._dimension.y + (self.speed * self._fall_time * 0.05))
         self.rect = self.get_rekt()

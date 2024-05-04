@@ -1,6 +1,6 @@
 from pygame.image import load as load_image
 
-from .entities import Terrain, Dimension, AppleConfig, Catcher, CatcherConfig, AppleManager
+from .entities import Terrain, Dimension, AppleConfig, Catcher, CatcherConfig, AppleManager, GroundFactory, DisplayNumberFactory
 from .helpers import Logger
 from .game_engine import GameEngine
 
@@ -46,16 +46,33 @@ def main():
     
     apple_manager = AppleManager(config=apple_config, screen_size=screen_size, logger=logger)
     
+    ground_tile_size = Dimension(
+        x = 0, 
+        y = 0,
+        w = 64,
+        h = 64
+    )
+
+    ground_factory = GroundFactory(
+        screen_size=screen_size,
+        image_paths=[".\img\ground.png", ".\img\ground-2.png", ".\img\ground-3.png"],
+        tile_size=ground_tile_size,
+        logger=logger
+    )
+
     terrain = Terrain(
         screen_size=screen_size,
-        ground_size=128,
+        ground_factory=ground_factory,
         logger=logger)
+    
+    display_number_factory = DisplayNumberFactory(screen_size=screen_size)
 
     engine = GameEngine(
         screen_size=screen_size,
         terrain=terrain,
         catcher=catcher,
         apple_manager=apple_manager,
+        display_number_factory=display_number_factory,
         logger=logger)
 
     engine.init()
