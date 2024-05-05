@@ -55,5 +55,10 @@ class Catcher(Entity):
         )
         screen.blit(self.image, self.rect)
 
+    def tick(self, screen: Surface, screen_size: Dimension):
+        self.update(screen_size.w)
+        self.display(screen)
+
+
     def __str__(self):
         return f"CATCHER || x:{self._dimension.x}, y:{self._dimension.y}, width:{self._dimension.w}, speed:{self.speed} "

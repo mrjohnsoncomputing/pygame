@@ -1,6 +1,7 @@
 from pygame.image import load as load_image
 
-from .entities import Terrain, Dimension, AppleConfig, Catcher, CatcherConfig, AppleManager, GroundFactory, DisplayNumberFactory
+from .entities import Terrain, Dimension, AppleConfig, Catcher, CatcherConfig, AppleManager
+from .entities import GroundFactory, DisplayNumberFactory, FadingTextFactory
 from .helpers import Logger
 from .game_engine import GameEngine
 
@@ -66,13 +67,14 @@ def main():
         logger=logger)
     
     display_number_factory = DisplayNumberFactory(screen_size=screen_size)
-
+    fading_text_factory = FadingTextFactory()
     engine = GameEngine(
         screen_size=screen_size,
         terrain=terrain,
         catcher=catcher,
         apple_manager=apple_manager,
         display_number_factory=display_number_factory,
+        fading_text_factory=fading_text_factory,
         logger=logger)
 
     engine.init()

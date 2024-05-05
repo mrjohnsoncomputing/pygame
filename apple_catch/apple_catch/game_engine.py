@@ -6,9 +6,9 @@ from pygame import QUIT
 from pygame.time import Clock
 from pygame.event import get as get_event
 from pygame.image import load as load_image
-from pygame.sprite import spritecollideany, Group
 
-from .entities import Terrain, Text, Catcher, Dimension, AppleManager, DisplayNumber, DisplayNumberFactory, DisplayNumberGroup
+from .entities import Terrain, Catcher, Dimension, AppleManager, Apple
+from .entities import DisplayNumberFactory, DisplayNumberGroup, FadingTextGroup, FadingTextFactory
 from .helpers import Math, Logger
 
 class GameEngine:
@@ -19,8 +19,10 @@ class GameEngine:
             apple_manager: AppleManager, 
             terrain: Terrain,
             display_number_factory: DisplayNumberFactory,
+            fading_text_factory: FadingTextFactory,
             logger: Logger):
         self._display_text_factory = display_number_factory
+        self._fading_text_factory = fading_text_factory
         self._screen: Surface | None = None
         self._game_clock: Clock | None = None
         self._game_is_running: bool = False
@@ -30,7 +32,7 @@ class GameEngine:
         self._logger: Logger = logger
         self._image: Surface = load_image("./img/background.png")
         self._current_score: int = 0
-        self._text: Group = Group()
+        self._fading_text_group: FadingTextGroup = FadingTextGroup()
         self._display_text_group: DisplayNumberGroup = DisplayNumberGroup()
         self._terrain: Terrain = terrain
     
@@ -54,72 +56,49 @@ class GameEngine:
     def create_display_text(self):
         current_score = self._display_text_factory.get_current_score()
         self._display_text_group.add(current_score)
+    
+    def check_events(self):
+        for event in get_event():
+            if event.type == QUIT:
+                self._game_is_running = False
+
+    def calculate_points(self, apple: Apple):
+        points = Math.roundto(apple.width/10, 5)
+        if not apple._is_good:
+            return -points
+        return points
+    
+    def get_ticks(self, frame_rate: int = 144) -> float:
+        return self._game_clock.tick(frame_rate) / 1000
+    
+    def check_for_collisions(self):
+        while True:
+            if (apple := self._apple_manager._good_apples.get_colliding_apple(self._catcher)) is None:
+                if (apple := self._apple_manager._bad_apples.get_colliding_apple(self._catcher)) is None:
+                    break
         
+            points = self.calculate_points(apple=apple)
+            self.current_score += points
+            self._fading_text_group.add(
+                self._fading_text_factory.get_text(points=points, apple=apple))
+
     def run(self):
-        dt = 0
+        ticks = 0
         while self._game_is_running:
-            #self._screen.blit(self._image, (self._screen_size.w - 3000, self._screen_size.h - 3000))
             self._terrain.draw(self._screen)
             self._logger.reset()
             self._logger.log(f"Score: {self._current_score}", self._screen)
-            # poll for events
-            # pygame.QUIT event means the user clicked X to close your window
-            for event in get_event():
-                if event.type == QUIT:
-                    self._game_is_running = False
-
-            self._apple_manager.try_add_apple()
-            self._apple_manager.update(dt)
-            self._apple_manager.display(self._screen)
-
-            self._catcher.update(self._screen_size.w)
-            self._catcher.display(self._screen)
-
-            if (good_apple := spritecollideany(self._catcher, self._apple_manager._good_apples)) is not None:
-                self._apple_manager._good_apples.remove(good_apple)
-                points = Math.roundto(good_apple.width/10, 5)
-                self.current_score += points
-                self._text.add(
-                    Text(
-                        text = f"+{points}",
-                        size = good_apple.width,
-                        x=good_apple._dimension.x + good_apple._dimension.w + 10,
-                        y=good_apple._dimension.y - 10,
-                        colour=(185,255,50)
-                    )
-                )
-
-            if (bad_apple := spritecollideany(self._catcher, self._apple_manager._bad_apples)) is not None:
-                self._apple_manager._bad_apples.remove(bad_apple)
-                points = Math.roundto(bad_apple.width/10, 5)
-                self.current_score -= points
-                self._text.add(
-                    Text(
-                        text = f"-{points}",
-                        size = bad_apple.width,
-                        x=bad_apple._dimension.x - 10,
-                        y=bad_apple._dimension.y - 10,
-                        colour=(255,105,185)
-                    )
-                )
-
-            self._text.update()
-            self._text.draw(self._screen)
-
-            self._display_text_group.update()
-            self._display_text_group.draw(self._screen)
-
-            self._text.remove(
-                [
-                    t
-                    for t in self._text
-                    if t.size < 1
-                ]
-            )
+            
+            self.check_events()
+            self._apple_manager.tick(ticks=ticks, screen=self._screen)
+            self._catcher.tick(screen=self._screen, screen_size=self._screen_size)
+            self.check_for_collisions()
+            self._fading_text_group.tick(self._screen)
+            self._display_text_group.tick(self._screen)
 
             # flip() the display to put your work on screen
             display.flip()
 
-            dt = self._game_clock.tick(144) / 1000
+            ticks = self.get_ticks(144)
         
         pygame_quit()

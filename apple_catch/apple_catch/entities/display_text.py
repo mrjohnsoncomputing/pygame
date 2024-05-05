@@ -9,6 +9,8 @@ from .entity import Entity
 
 
 class DisplayNumberGroup(Group):
+    def __init__(self):
+        super().__init__()
 
     def get_item_from_label(self, label: str) -> DisplayNumber | None:
         matches = [
@@ -17,6 +19,10 @@ class DisplayNumberGroup(Group):
             if isinstance(x, DisplayNumber) and x.label.startswith(label)
         ]
         return None if len(matches) == 0 else matches[0]
+    
+    def tick(self, screen: Surface):
+        self.update()
+        self.draw(surface=screen)
 
 class DisplayNumberFactory:
     def __init__(self, screen_size: Dimension):
