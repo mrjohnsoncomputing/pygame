@@ -1,3 +1,4 @@
 click
 pygame
 numpy
+./loglad

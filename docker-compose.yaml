@@ -1,0 +1,6 @@
+pygame:
+  build: .
+  ports: 
+    - "5050"
+  volumes:
+   - ./src/apple_catch:.

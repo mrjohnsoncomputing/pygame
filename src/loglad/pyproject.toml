@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "loglad"
+authors = [
+    {name = "Dale Johnson", email = "hello@mrjohnsoncomputing.co.uk"},
+]
+description = "Abstraction of the python logging library"
+version = "0.0.3"
+dependencies = []
+
+[tool.setuptools]
+packages=["loglad"]
