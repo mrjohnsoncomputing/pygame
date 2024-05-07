@@ -37,8 +37,8 @@ class Message:
     @classmethod
     def from_dict(cls, obj: dict[str, Any]):
         return cls(
-            sender=obj["sender"],
-            content=obj["content"],
+            sender=str(obj["sender"]),
+            content=str(obj["content"]),
             timestamp=datetime.strptime(obj["timestamp"], stored_format)
         )
 

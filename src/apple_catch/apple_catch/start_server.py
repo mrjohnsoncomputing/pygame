@@ -12,9 +12,9 @@ def server():
     builder = LoggerBuilder("main")
     logger = builder.from_yaml(config_path)
     address = Address.from_dynamic_ipv4(port=5050)
-    protocol = ServerSimpleMessageProtocol(address=address, logger=logger)
+    protocol = ServerSimpleMessageProtocol(address=address, logger=logger.getChild("ServerSimpleMessageProtocol"))
     server = Server(
         protocol=protocol,
         address=address,
-        logger=logger)
+        logger=logger.getChild("Server"))
     server.start()

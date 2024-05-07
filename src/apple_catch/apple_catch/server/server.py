@@ -42,7 +42,7 @@ class Server:
         last_seen_message_dt = datetime.min
         while True:
 
-            if listener in [True, "true", "True"]:
+            if listener == "True":
                 for message in self.get_messages_from_others(client_id, last_seen_message_dt):
                     self._logger.debug(f"Sending message to {client_id}: {message}")
                     self._protocol.send_message(message=message, destination_socket=client_socket)

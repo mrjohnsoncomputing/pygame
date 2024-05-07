@@ -46,6 +46,7 @@ class ClientSimpleMessageProtocol(SimpleMessageProtocol):
         self._listener = listener
 
     def connect_to_server(self, address: Address) -> str | None:
+        self._logger.debug(f"Performing initial SimpleMessageProtocol handshake with server: '{address}'")
         try:
             self._socket.connect(address.tuple)
             self._logger.debug(f"Successfully connected to Server: {address}")
@@ -56,6 +57,7 @@ class ClientSimpleMessageProtocol(SimpleMessageProtocol):
         message = self.recieve_message()
         self._id = message.content
         self.send_string(self._listener)
+        self._logger.debug(f"Initial SimpleMessageProtocol handshake with server '{address}' has completed successfully")
         return self._id
 
 class ServerSimpleMessageProtocol(SimpleMessageProtocol):
@@ -85,7 +87,9 @@ class ServerSimpleMessageProtocol(SimpleMessageProtocol):
         self._logger.info(f"Now listening on {self._address}")
     
     def on_client_connect(self, client_id: str, client_socket: socket):
+        self._logger.debug(f"Performing initial SimpleMessageProtocol handshake with new client: '{client_id}'")
         message = Message.with_timestamp(sender=self._id, content=client_id)
         self.send_message(message=message, destination_socket=client_socket)
         message = self.recieve_message(destination_socket=client_socket)
+        self._logger.debug(f"Initial SimpleMessageProtocol handshake with '{client_id}' is now complete.")
         return message.content

@@ -14,8 +14,8 @@ def client(listener: bool):
     builder = LoggerBuilder("main")
     logger = builder.from_yaml(config_path)
     address = Address.from_dynamic_ipv4(5050)
-    protocol = ClientSimpleMessageProtocol(listener=listener, logger=logger)
-    client = Client(address=address, protocol=protocol, logger=logger)
+    protocol = ClientSimpleMessageProtocol(listener=listener, logger=logger.getChild("ClientSimpleMessageProtocol"))
+    client = Client(address=address, protocol=protocol, logger=logger.getChild("Client"))
     client.connect()
     while True:
         if listener:
