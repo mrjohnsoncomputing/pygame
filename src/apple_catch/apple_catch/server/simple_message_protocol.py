@@ -1,4 +1,4 @@
-from json import loads, dumps
+from json import loads, dumps, decoder
 from logging import Logger
 from socket import socket, error
 from socket import AF_INET, SOCK_STREAM
@@ -22,7 +22,7 @@ class SimpleMessageProtocol:
         json_str_message = dumps(message.to_dict())
         encoded_message = f"{self._message_start}{json_str_message}{self._message_end}".encode()
         socket = destination_socket or self._socket
-        self._logger.debug(f"Sending message '{message.content}' to \nDestination Socket: {destination_socket}\nSelf Socket: {self._socket}")
+        self._logger.debug(f"Sending message: '{message.content}'")
         socket.send(encoded_message)
 
     def recieve_message(self, destination_socket: socket | None = None) -> Message:
@@ -32,7 +32,12 @@ class SimpleMessageProtocol:
             message += socket.recv(4).decode()
         
         payload = message.strip().replace(self._message_start, "").replace(self._message_end, "")
-        obj = loads(payload)
+        try:
+            obj = loads(payload)
+        except decoder.JSONDecodeError:
+            self._logger.warning(f"JSON decode error for payload: {payload}")
+            return Message.failure(self._id)
+
         return Message.from_dict(obj)
 
 class ClientSimpleMessageProtocol(SimpleMessageProtocol):

@@ -11,6 +11,15 @@ class Message:
     timestamp: datetime
 
     @classmethod
+    def failure(cls, sender: str):
+        return cls(
+            sender=sender,
+            content="Failed to recieve message",
+            timestamp = datetime.now()
+        )
+
+
+    @classmethod
     def with_timestamp(cls, sender: str, content: str):
         return cls(
             sender=sender,
